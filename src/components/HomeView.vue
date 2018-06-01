@@ -3,7 +3,7 @@
     <div class="mdl-grid">
       <div class="mdl-cell mdl-cell--3-col mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
       <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-phone">
-        <div v-for="picture in this.$root.cat" class="image-card" @click="displayDetails(picture.id)" :key="picture.id">
+        <div v-for="picture in getCats()" class="image-card" @click="displayDetails(picture.id)" :key="picture.id">
           <div class="image-card__picture">
             <img :src="picture.url" />
           </div>
@@ -20,18 +20,36 @@
 </template>
 
 <script>
-import data from '../data'
-
 export default {
   methods: {
     displayDetails (id) {
       this.$router.push({name: 'detail', params: {id: id}})
+    },
+    getCats () {
+      if (navigator.onLine) {
+        this.saveCatsToCache()
+        return this.$root.cat
+      } else {
+        return JSON.parse(localStorage.getItem('cats'))
+      }
+    },
+    saveCatsToCache () {
+      this.$root.$firebaseRefs.cat.orderByChild('created_at').once('value', (snapchot) => {
+        let cachedCats = []
+        snapchot.forEach((catSnapchot) => {
+          let cachedCat = catSnapchot.val()
+          cachedCat['.key'] = catSnapchot.key
+          cachedCats.push(cachedCat)
+        })
+        localStorage.setItem('cats', JSON.stringify(cachedCats))
+      })
     }
   },
+  mounted () {
+    this.saveCatsToCache()
+  },
   data () {
-    return {
-      'pictures': data.pictures
-    }
+    return {}
   }
 }
 </script>
