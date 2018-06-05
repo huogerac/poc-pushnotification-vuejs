@@ -1,4 +1,5 @@
-import firebase from 'firebase'
+importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js')
+importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js')
 
 var config = {
   apiKey: 'AIzaSyABRALdPhSmLH_NdwxQ27gcwG-_v9QacV4',
@@ -11,6 +12,4 @@ var config = {
 
 firebase.initializeApp(config)
 
-export default {
-  messaging: firebase.messaging()
-}
+const messaging = firebase.messaging()

@@ -1,0 +1,38 @@
+TODO:
+https://serviceworke.rs/push-payload_service-worker_doc.html
+
+
+
+
+LINKS
+https://console.firebase.google.com/u/0/project/evolutiodev/settings/cloudmessaging/
+
+
+https://firebase.google.com/docs/web/setup
+https://firebase.google.com/docs/cloud-messaging/js/client
+
+https://bitsofco.de/bitsofcode-pwa-part-3-push-notifications/
+
+http://railsgirls.org/getting-started-with-firebase-cloud-messaging-on-the-web-firecasts/
+
+
+
+
+https://auth0.com/blog/introduction-to-progressive-web-apps-push-notifications-part-3/
+https://github.com/GoogleChrome/samples/blob/gh-pages/push-messaging-and-notifications/service-worker.js
+
+
+
+
+curl -X POST --header "Authorization: key=AAAAloSUbng:APA91bFyjTm6EEJ_BDFrzsHc4yk0DrXLchwgfybWTwmO7O9A-wa2jcI7un8Ig6NX0VSb8WVfQVQpuO3a0Ictx5bn8bO95Uz3cVLuyiNAiGNUvFUWIFtL9tRaDqiRfg-Yvt-40NGD0Wt9" \
+    --Header "Content-Type: application/json" \
+    https://fcm.googleapis.com/fcm/send \
+    -d "{\"to\":\"cv_dQ9HEph4:APA91bGuXNB_TA9InvchSwTSMOIOJAXc67usB-xo-vmCTmTfJCmu7yoUEGyjG-QV3KzeMlK8dFX9atm5c3YEfuQNtKKWJYK1CH8A7-qYej8KozfkMvaPP6w-0w48f0ai5kcu_BKBhV2b\",\"notification\":{\"body\":\"THIS IS A PUSH NOTIFICATION MESSAGE\"}"
+
+curl -i -H 'Content-type: application/json' -H 'Authorization: key=AAAAloSUbng:APA91bFyjTm6EEJ_BDFrzsHc4yk0DrXLchwgfybWTwmO7O9A-wa2jcI7un8Ig6NX0VSb8WVfQVQpuO3a0Ictx5bn8bO95Uz3cVLuyiNAiGNUvFUWIFtL9tRaDqiRfg-Yvt-40NGD0Wt9' -XPOST https://fcm.googleapis.com/fcm/send -d '{
+  "registration_ids":["cv_dQ9HEph4:APA91bGuXNB_TA9InvchSwTSMOIOJAXc67usB-xo-vmCTmTfJCmu7yoUEGyjG-QV3KzeMlK8dFX9atm5c3YEfuQNtKKWJYK1CH8A7-qYej8KozfkMvaPP6w-0w48f0ai5kcu_BKBhV2b"],
+  "notification": {
+      "title":"Title of your notification",
+      "body":"content of your notification"
+  }
+}'

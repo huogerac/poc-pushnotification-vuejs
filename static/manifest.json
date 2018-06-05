@@ -1,6 +1,7 @@
 {
   "name": "cropchat",
   "short_name": "cropchat",
+  "gcm_sender_id": "103953800507",
   "icons": [
     {
       "src": "/static/img/icons/cropchat-icon-64x64.png",

@@ -1,55 +1,100 @@
 <template>
+
   <div>
+
+    <push-notification
+        ref="pushNotification"
+        :currentToken="userToken"
+        @update-token="onUpdateToken"
+        @new-message="onNewMessage" />
+
+    <div id="snackbar-message" class="mdl-js-snackbar mdl-snackbar">
+      <div class="mdl-snackbar__text"></div>
+      <button class="mdl-snackbar__action" type="button"></button>
+    </div>
+
     <div class="mdl-grid">
       <div class="mdl-cell mdl-cell--3-col mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
       <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-phone">
-        <div v-for="picture in getCats()" class="image-card" @click="displayDetails(picture.id)" :key="picture.id">
-          <div class="image-card__picture">
-            <img :src="picture.url" />
-          </div>
-          <div class="image-card__comment mdl-card__actions">
-            <span>{{ picture.comment }}</span>
+
+        <div v-show="askForPermission && !userToken" class="headline" style="background-color: #ff897d; padding: 20px; border-radius: 6px; color: #fff;">
+          Hey, click here to start receiving our amazing push notifications!!!
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+              @click="enableNotifications">
+            Enable notifications
+          </button>
+        </div>
+
+        <div v-show="userToken">
+          <h2>Try to send a message to this user by:</h2>
+          <div style="background-color: rgb(65, 65, 65); padding: 20px; border-radius: 6px; color: rgb(228, 255, 0); font-family: monospace;">
+            <p>
+            curl -i -H 'Content-type: application/json'
+                    -H 'Authorization: key={{ firebaseServerKey }}'
+                    -XPOST https://fcm.googleapis.com/fcm/send -d '{
+                      "registration_ids":["{{ userToken }}"],
+                      "notification": {
+                          "title":"Title of your notification",
+                          "body":"content of your notification"
+                      }
+                    }'
+            </p>
           </div>
         </div>
+
       </div>
     </div>
-    <router-link class="add-picture-button mdl-button mdl-js-button mdl-button--fab mdl-button--colored" to="/post">
-      <i class="material-icons">add</i>
-    </router-link>
   </div>
 </template>
 
 <script>
+import PushNotification from '@/components/PushNotification'
+import api from '@/api/api'
+
 export default {
+  components: {
+    PushNotification
+  },
   methods: {
-    displayDetails (id) {
-      this.$router.push({name: 'detail', params: {id: id}})
+    enableNotifications () {
+      this.$refs.pushNotification.askForPermission()
     },
-    getCats () {
-      if (navigator.onLine) {
-        this.saveCatsToCache()
-        return this.$root.cat
-      } else {
-        return JSON.parse(localStorage.getItem('cats'))
+    onUpdateToken (newToken) {
+      this.userToken = newToken
+      // send token to the server
+      api.update_token(this.userProfile, this.userToken)
+    },
+    onNewMessage (message) {
+      var snackbarContainer = document.querySelector('#snackbar-message')
+      var data = {
+        message: message.notification.title + ': ' + message.notification.body,
+        timeout: 10000,
+        actionText: 'OK'
       }
-    },
-    saveCatsToCache () {
-      this.$root.$firebaseRefs.cat.orderByChild('created_at').once('value', (snapchot) => {
-        let cachedCats = []
-        snapchot.forEach((catSnapchot) => {
-          let cachedCat = catSnapchot.val()
-          cachedCat['.key'] = catSnapchot.key
-          cachedCats.push(cachedCat)
-        })
-        localStorage.setItem('cats', JSON.stringify(cachedCats))
-      })
+      snackbarContainer.MaterialSnackbar.showSnackbar(data)
     }
   },
-  mounted () {
-    this.saveCatsToCache()
+  created () {
+    var userLoggedId = 1
+    // check if user has a token
+    api.user_profile(userLoggedId).then((response) => {
+      this.userProfile = response.data
+      this.userToken = this.userProfile.push_notification.ask_for_permission.token
+      if (this.userProfile.push_notification.ask_for_permission) {
+        setTimeout(() => {
+          // Simulate it wont ask for permission in the first user access
+          this.askForPermission = true
+        }, 4000)
+      }
+    })
   },
   data () {
-    return {}
+    return {
+      firebaseServerKey: 'AAAAloSUbng:APA91bFyjTm6EEJ_BDFrzsHc4yk0DrXLchwgfybWTwmO7O9A-wa2jcI7un8Ig6NX0VSb8WVfQVQpuO3a0Ictx5bn8bO95Uz3cVLuyiNAiGNUvFUWIFtL9tRaDqiRfg-Yvt-40NGD0Wt9',
+      userProfile: {},
+      askForPermission: false,
+      userToken: null
+    }
   }
 }
 </script>
