@@ -1,27 +1,9 @@
-# cropchat
+# POC de push notifications
 
-> A Vue.js project
+## Demo
+- https://www.youtube.com/watch?v=Xn72X0D-xt4&t=2s
 
-## Build Setup
 
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-# run unit tests
-npm run unit
-
-# run all tests
-npm test
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## TODO
+- achar um forma de não deixar no código os dados sensíveis da API
+- permitir desabilitar as notificaçes
